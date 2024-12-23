@@ -1,0 +1,25 @@
+
+provider "aws" {
+   region     = "eu-central-1"
+   access_key = "AKIASFIXCSPB7BH3M5SK"
+   secret_key = "qJpiLuIERRZsOrOMxewiWLbGpVTQiV2DuYViYvIs"
+}
+
+resource "aws_instance" "ec2_example" {
+
+    ami = "ami-053b12d3152c0cc71"
+    instance_type = "t2.micro"
+    subnet_id = "subnet-0d6d70a6bab80a54a"plan
+    key_name= "aws_key"
+    vpc_security_group_ids = [aws_security_group.main.id]
+
+  user_data = <<-EOF
+      #!/bin/sh
+      sudo apt-get update
+      sudo apt install -y apache2
+      sudo systemctl status apache2
+      sudo systemctl start apache2
+      sudo chown -R $USER:$USER /var/www/html
+      sudo echo "<html><body><h1>Hello this custom page built with Terraform User Data</h1></body></html>" > /var/www/html/index.html
+      EOF
+} 
